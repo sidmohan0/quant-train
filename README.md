@@ -19,6 +19,7 @@ We are training a Random Forest model from the scikit-learn library to predict t
 
 This started as a fork of QuantGalore's repo, but I've made some changes to the code and added some features.  I've also added a few more dependencies to the requirements.txt file.  I've also added a .env file to store some of the key variables.  You'll need to create a .env file in the root directory of the project which you can kickstart by copying env.example, then renaming it to .env, and then populating all of the fields with the appropriate variables. the only variable that you don't *need* to update is WORKING_DIR because the python script will automatically create a folder called 'working_dir' if one doesn't exist. 
 
+I'll let the overall purpose of this project go with the flow and welcome community feedback! 
 
 
 ## Installation
@@ -32,9 +33,14 @@ This started as a fork of QuantGalore's repo, but I've made some changes to the 
 
 ## Future Updates
 
+### Quality of Life
+* pipenv or poetry
+* refactor feature engineering parts
+* refactor backtesting parts
+* refactor into packages  and modules
+
 ### Data
 * Use the polygon python client more proactively to speed up some of the ingestion of raw information like options contracts
-* Finish building out my feature-engineering pipeline so i can test new features more quickly 
 
 ### Automation
 * run_backtest.sh
@@ -51,10 +57,10 @@ This started as a fork of QuantGalore's repo, but I've made some changes to the 
 ### Processing
 By far the slowest part of the process is the feature engineering. While we are ultimately dumping a lot of information about contracts in-memory when running the program, the feature engineering, where 
 we calculate the Greeks of the contracts, involves various operations over the dataframes. Some things I'm thinking about and open to suggestions on:
-* Polars for faster processing
+* Polars for faster processing of Dataframes
 * GPU acceleration
-* PySpark for distributed processing
-* Anything in tf-quant-finance worth checking out? 
+* PySpark for distributed processing, also use w/ or instead of Polars
+* Maybe add and or update the options functions in feature_functions.py to use tf-quant-finance
 
 
 ### Modeling
