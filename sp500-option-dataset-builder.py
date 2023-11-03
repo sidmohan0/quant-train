@@ -18,11 +18,25 @@ import pytz
 from datetime import timedelta, datetime
 from pandas_market_calendars import get_calendar
 
-engine = sqlalchemy.create_engine('mysql+mysqlconnector://username:password@database-host-name:3306/database-name')
+# 
+from dotenv import load_dotenv
+import os
+import datetime as dt
 
+# Load the .env file
+load_dotenv()
+
+
+# Access the variables
+polygon_api_key = os.getenv('POLYGON_API_KEY')
+mysql_username = os.getenv('MYSQL_USERNAME')
+mysql_password = os.getenv('MYSQL_PASSWORD')
+mysql_host = os.getenv('MYSQL_HOST')
+mysql_port = os.getenv('MYSQL_PORT')
+mysql_database = os.getenv('MYSQL_DATABASE')
+working_dir = os.getenv('WORKING_DIR')
 initial_time = datetime.now()
 
-polygon_api_key = "polygon.io api key, use code QUANTGALORE for 10% off"
 
 calendar = get_calendar("NYSE")
 
@@ -245,8 +259,17 @@ Pre_Training_Dataset["returns"] = ((Pre_Training_Dataset["open"] - Pre_Training_
 Pre_Training_Dataset["month"] = Pre_Training_Dataset.index.month
 Pre_Training_Dataset["day"] = Pre_Training_Dataset.index.day
 
+# Write to CSV in case some MySQL connectivity issue preventing saving outputs. 
+if not os.path.isdir(f"{working_dir}"):
+        os.mkdir(f"{working_dir}")
+
+Pre_Training_Dataset.to_csv(f"{working_dir}/sp500_option_prod_{dt.datetime.now().date()}.csv")
+
+#
+
+engine = sqlalchemy.create_engine(f'mysql+pymysql://{mysql_username}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}')
 with engine.connect() as conn:
-    result = conn.execute(sqlalchemy.text('DROP TABLE sp500_option_production'))
+    result = conn.execute(sqlalchemy.text('DROP TABLE IF EXISTS sp500_option_production'))
 
 Pre_Training_Dataset.to_sql("sp500_option_production", con = engine)
 

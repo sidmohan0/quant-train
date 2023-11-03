@@ -43,7 +43,7 @@ calendar = get_calendar("NYSE")
 underlying_ticker = "SPY"
 
 today = (datetime.today() - timedelta(days = 1))
-start_date = "2023-10-16"
+start_date = "2022-11-16"
 
 trade_dates = pd.DataFrame({"trade_dates": calendar.schedule(start_date = start_date, end_date = today).index.strftime("%Y-%m-%d").values})
 
@@ -264,6 +264,7 @@ Pre_Training_Dataset["month"] = Pre_Training_Dataset.index.month
 Pre_Training_Dataset["day"] = Pre_Training_Dataset.index.day
 
 # Write to CSV in case some MySQL connectivity issue preventing saving outputs. 
+
 if not os.path.isdir(f"{working_dir}"):
         os.mkdir(f"{working_dir}")
 
