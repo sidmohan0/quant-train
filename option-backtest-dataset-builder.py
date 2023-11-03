@@ -16,8 +16,22 @@ import mysql.connector
 
 from datetime import timedelta, datetime
 from pandas_market_calendars import get_calendar
+from dotenv import load_dotenv
+import os
 
-polygon_api_key = "polygon.io api key, use code QUANTGALORE for 10% off"
+# Load the .env file
+load_dotenv()
+
+
+# Access the variables
+polygon_api_key = os.getenv('POLYGON_API_KEY')
+mysql_username = os.getenv('MYSQL_USERNAME')
+mysql_password = os.getenv('MYSQL_PASSWORD')
+mysql_host = os.getenv('MYSQL_HOST')
+mysql_port = os.getenv('MYSQL_PORT')
+mysql_database = os.getenv('MYSQL_DATABASE')
+
+
 
 calendar = get_calendar("NYSE")
 
@@ -244,16 +258,16 @@ Pre_Training_Dataset["returns"] = ((Pre_Training_Dataset["open"] - Pre_Training_
 Pre_Training_Dataset["month"] = Pre_Training_Dataset.index.month
 Pre_Training_Dataset["day"] = Pre_Training_Dataset.index.day
 
-engine = sqlalchemy.create_engine('mysql+mysqlconnector://username:password@database-host-name:3306/database-name')
+engine = sqlalchemy.create_engine(f'mysql+pymysql://{mysql_username}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}')
 
 with engine.connect() as conn:
-    result = conn.execute(sqlalchemy.text(f'DROP TABLE {underlying_ticker}_option_backtest'))
+    result = conn.execute(sqlalchemy.text(f'DROP TABLE IF EXISTS {underlying_ticker.lower()}_option_backtest'))
 
-Pre_Training_Dataset.to_sql(f"{underlying_ticker}_option_backtest", con = engine)
+Pre_Training_Dataset.to_sql(f"{underlying_ticker.lower()}_option_backtest", con = engine, if_exists = "append")
 
 Option_Chain_DataFrame = pd.concat(option_chain_list).reset_index()
 
 with engine.connect() as conn:
-    result = conn.execute(sqlalchemy.text(f'DROP TABLE {underlying_ticker}_option_chain'))
+    result = conn.execute(sqlalchemy.text(f'DROP TABLE IF EXISTS {underlying_ticker.lower()}_option_chain'))
 
-Option_Chain_DataFrame.to_sql(f"{underlying_ticker}_option_chain", con = engine)
+Option_Chain_DataFrame.to_sql(f"{underlying_ticker.lower()}_option_chain", con = engine, if_exists = "append")
