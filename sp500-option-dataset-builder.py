@@ -277,4 +277,4 @@ final_time = datetime.now()
 
 database_string = f"Database built on {today} in {final_time-initial_time}, last data point: {Pre_Training_Dataset.index[-1].strftime('%Y-%m-%d')}"
 print(database_string)
-send_message(message = database_string, subject = f"Database Operation on {today.strftime('%A')}, {today}")
+# send_message(message = database_string, subject = f"Database Operation on {today.strftime('%A')}, {today}")

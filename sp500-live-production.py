@@ -22,9 +22,28 @@ from datetime import timedelta, datetime
 from pandas_market_calendars import get_calendar
 from sklearn.ensemble import RandomForestClassifier
 
-start_time = datetime.now(tz=pytz.timezone("US/Eastern"))
+# 
+from dotenv import load_dotenv
+import os
+import datetime as dt
 
-polygon_api_key = "polygon.io api key, use code QUANTGALORE for 10% off"
+# Load the .env file
+load_dotenv()
+
+
+# Access the variables
+polygon_api_key = os.getenv('POLYGON_API_KEY')
+mysql_username = os.getenv('MYSQL_USERNAME')
+mysql_password = os.getenv('MYSQL_PASSWORD')
+mysql_host = os.getenv('MYSQL_HOST')
+mysql_port = os.getenv('MYSQL_PORT')
+mysql_database = os.getenv('MYSQL_DATABASE')
+working_dir = os.getenv('WORKING_DIR')
+
+
+initial_time = datetime.now()
+
+start_time = datetime.now(tz=pytz.timezone("US/Eastern"))
 
 calendar = get_calendar("NYSE")
 
@@ -200,7 +219,7 @@ feature_price_dataframe = pd.DataFrame([{"timestamp": pd.to_datetime(date),
 feature_price_dataframe["month"] = feature_price_dataframe.index.month
 feature_price_dataframe["day"] = feature_price_dataframe.index.day
                         
-engine = sqlalchemy.create_engine('mysql+mysqlconnector://username:password@database-host-name:3306/database-name')
+engine = sqlalchemy.create_engine(f'mysql+pymysql://{mysql_username}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}')
 Pre_Training_Dataset = pd.read_sql("SELECT * FROM sp500_option_production", con = engine).set_index("timestamp")
 
 training_features = ['month', 'day','call_put_gamma_imbalance', 'mean_call_ivol', 'net_call_gamma','net_call_volume', 'total_volume', 'returns']
@@ -250,8 +269,8 @@ if Long_Prediction[0] == Short_Prediction[0]:
     
     prediction_string = f"Prediction on {date}: {Random_Forest_Prediction[0]}, probability of {probability*100}% Elapsed Time: {Elapsed_Time}"
     print(prediction_string)
-    send_message(message = prediction_string, subject = f"Trade Output on {today.strftime('%A')}, {date}")
+    # send_message(message = prediction_string, subject = f"Trade Output on {today.strftime('%A')}, {date}")
 else:
     prediction_string = f"Prediction of long and short dataset do not match. Do not trade. Elapsed Time: {Elapsed_Time}"
     print(prediction_string)
-    send_message(message = prediction_string, subject = f"Trade Output on {today.strftime('%A')}, {date}")
+    # send_message(message = prediction_string, subject = f"Trade Output on {today.strftime('%A')}, {date}")
