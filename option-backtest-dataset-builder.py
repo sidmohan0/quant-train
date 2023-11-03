@@ -3,6 +3,7 @@
 Created in 2023
 
 @author: Quant Galore
+@contributor: Sid Mohan
 """
 
 from feature_functions import binomial_option_price, bjerksund_stensland_greeks, Binarizer, return_proba
@@ -16,8 +17,11 @@ import mysql.connector
 
 from datetime import timedelta, datetime
 from pandas_market_calendars import get_calendar
+
+# 
 from dotenv import load_dotenv
 import os
+import datetime as dt
 
 # Load the .env file
 load_dotenv()
@@ -30,6 +34,7 @@ mysql_password = os.getenv('MYSQL_PASSWORD')
 mysql_host = os.getenv('MYSQL_HOST')
 mysql_port = os.getenv('MYSQL_PORT')
 mysql_database = os.getenv('MYSQL_DATABASE')
+working_dir = os.getenv('WORKING_DIR')
 
 
 
@@ -38,7 +43,7 @@ calendar = get_calendar("NYSE")
 underlying_ticker = "SPY"
 
 today = (datetime.today() - timedelta(days = 1))
-start_date = "2022-11-16"
+start_date = "2023-10-16"
 
 trade_dates = pd.DataFrame({"trade_dates": calendar.schedule(start_date = start_date, end_date = today).index.strftime("%Y-%m-%d").values})
 
@@ -257,6 +262,17 @@ Pre_Training_Dataset = full_feature_price_data.copy()
 Pre_Training_Dataset["returns"] = ((Pre_Training_Dataset["open"] - Pre_Training_Dataset["close"].shift(1)) / Pre_Training_Dataset["close"].shift(1)).fillna(0).shift(-1)
 Pre_Training_Dataset["month"] = Pre_Training_Dataset.index.month
 Pre_Training_Dataset["day"] = Pre_Training_Dataset.index.day
+
+# Write to CSV in case some MySQL connectivity issue preventing saving outputs. 
+if not os.path.isdir(f"{working_dir}"):
+        os.mkdir(f"{working_dir}")
+
+Pre_Training_Dataset.to_csv(f"{working_dir}/{underlying_ticker}_pre_training_dataset_{dt.datetime.now().date()}.csv")
+
+Option_Chain_DataFrame = pd.concat(option_chain_list).reset_index()
+Option_Chain_DataFrame.to_csv(f"{working_dir}/{underlying_ticker}_pre_training_dataset_{dt.datetime.now().date()}.csv")
+
+#
 
 engine = sqlalchemy.create_engine(f'mysql+pymysql://{mysql_username}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}')
 
