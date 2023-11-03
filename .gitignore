@@ -1,2 +1,4 @@
 .env
-working_dir/*
+working_dir
+__pycache__
+```

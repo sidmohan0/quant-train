@@ -5,11 +5,16 @@ Created in 2023
 @author: Quant Galore
 """
 import smtplib
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+EMAIL = os.getenv("EMAIL")
+PASSWORD = os.getenv("PASSWORD")
 
 def send_message(message, subject):
     
-    EMAIL = "yours@gmail.com"
-    PASSWORD = "google-app-password, not your gmail password, but your application password"
+
     
     recipient = EMAIL
     auth = (EMAIL, PASSWORD)
