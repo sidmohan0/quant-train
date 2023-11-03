@@ -66,7 +66,7 @@ we calculate the Greeks of the contracts, involves various operations over the d
 
 ## Acknowledgement: 
 
-Credit to QuantGalore for the original code.  His repo can be found at: https://github.com/quantgalore/sp500-overnight-prediction, and check out his blog post: https://quantgalore.substack.com/p/overnight-prediction-of-sp-500.  
+Credit to QuantGalore for the original code.  I've dressed it up a bit but the core pieces as of initial commit i owe to them.  Check out their [repo](https://github.com/quantgalore/sp500-overnight-prediction), and [blog post](https://quantgalore.substack.com/p/overnight-prediction-of-sp-500)
 
 
 ## Changelog
